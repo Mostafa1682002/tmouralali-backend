@@ -64,71 +64,15 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal"
-                                                data-target="#edit{{ $product->id }}" title="تعديل"><i
-                                                    class="fa fa-edit"></i></button>
+
+
+                                            <a href="{{ route('admin.products.edit', $product->id) }}"
+                                                class="btn btn-info btn-sm" title="تعديل"><i class="fa fa-edit"></i></a>
                                             <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
                                                 data-target="#delete{{ $product->id }}" title="حذف"><i
                                                     class="fa fa-trash"></i></button>
                                         </td>
                                     </tr>
-
-                                    <!-- edit_modal_Grade -->
-                                    <div class="modal fade" id="edit{{ $product->id }}" tabindex="-1" role="dialog"
-                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 style="font-family: 'Cairo', sans-serif;" class="modal-title"
-                                                        id="exampleModalLabel">
-                                                        تعديل حالة المنتج
-                                                    </h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <!-- add_form -->
-                                                    <form action="{{ route('admin.products.update', $product->id) }}"
-                                                        method="post">
-                                                        @method('patch')
-                                                        @csrf
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <label for="name" class="mr-sm-2">اسم المنتج
-                                                                    :</label>
-                                                                <input id="name" type="text" name="name" readonly
-                                                                    class="form-control" value="{{ $product->name }}"
-                                                                    required>
-                                                                <input id="id" type="hidden" name="id"
-                                                                    class="form-control" value="{{ $product->id }}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <label class="control-label">الحاله</label>
-                                                                <select class="form-control form-white" name="active">
-                                                                    <option value="1" @selected($product->active == 1)>مفعل
-                                                                    </option>
-                                                                    <option value="0" @selected($product->active == 0)>
-                                                                        غير مفعل</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">الغاء</button>
-                                                            <button type="submit" class="btn btn-success">تعديل</button>
-                                                        </div>
-                                                    </form>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
                                     <!-- delete_modal_Grade -->
                                     <div class="modal fade" id="delete{{ $product->id }}" tabindex="-1" role="dialog"
                                         aria-labelledby="exampleModalLabel" aria-hidden="true">

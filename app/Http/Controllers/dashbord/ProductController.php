@@ -8,6 +8,7 @@ use App\Models\ImageProduct;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use DB;
 
 class ProductController extends Controller
 {
@@ -76,7 +77,8 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        return view('Dashboard.products.edit', compact('product'));
     }
 
     /**
@@ -84,10 +86,41 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        Product::findOrFail($id)->update([
-            'active' => $request->active,
+        $product = Product::findOrFail($id);
+        $request->validate([
+            'name' => "required|unique:products,name," . $id,
+            'price' => "required|numeric",
+            'description' => "required|string",
+            'active' => "required|boolean",
+            'main_image' => "nullable|image|mimes:jpeg,png,jpg,gif",
+            'images.*' => "nullable|image|mimes:jpeg,png,jpg,gif",
         ]);
-        return redirect()->back()->with('success', 'تم تعديل حالة المنتج بنجاح');
+        $data = $request->except('main_image', 'images');
+
+        if ($request->main_image != null) {
+            $data['main_image'] = uniqid(5) . $request->file('main_image')->getClientOriginalName();
+            $request->file('main_image')->storeAs('', $data['main_image'], 'products');
+            File::delete(ltrim(parse_url($product->main_image)['path'], '/'));
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($product->images as $image) {
+                File::delete(ltrim(parse_url($image->image)['path'], '/'));
+            }
+            DB::table('image_products')->where('product_id', $product->id)->delete();
+
+            foreach ($request->file('images') as $image) {
+                $name = uniqid(5) . $image->getClientOriginalName();
+                $image->storeAs('', $name, 'products');
+                ImageProduct::create([
+                    'image' => $name,
+                    'product_id' => $product->id
+                ]);
+            }
+        }
+
+        $product->update($data);
+        return redirect()->back()->with('success', 'تم تعديل  المنتج بنجاح');
     }
 
     /**

@@ -29,13 +29,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
+        $products = Product::where('active', 1)->paginate(10);
         return view('home', compact('products'));
     }
 
     public function products()
     {
-        $products = Product::all();
+        $products = Product::where('active', 1)->paginate(20);
         return view('products', compact('products'));
     }
     public function product($id)
